@@ -57,14 +57,18 @@ namespace QuantConnect.Algorithm.CSharp
 
         int momentCounter = 1;
 
-
-        //WHAT DOES THIS DO?
+        
         public override void Initialize()
         {
             SetStartDate(1970, 1, 1);  //Set Start Date
             SetEndDate(DateTime.Now);    //Set End Date
             SetCash(startingAccountSize);             //Set Strategy Cash
             SetBrokerageModel(BrokerageName.OandaBrokerage, AccountType.Margin);
+
+
+
+            //WHAT IS ALL OF THIS SUPPOSED TO DO?
+
 
             //loop through our list of symbols and add them to the subscription manager
             //foreach (var symbol in FxSymbols) //loops through the symbols in the fxsymbols list and passing them into the add forex function and then adding them to the dictionary
@@ -278,6 +282,16 @@ namespace QuantConnect.Algorithm.CSharp
                 }
             }
 
+
+
+
+
+
+
+            //WHAT IS ALL OF THIS SUPPOSED TO DO? IT SHOWS UP IN LIKE 6 PLACES
+            //UNCOMMENT FOR BUILD ERROR
+
+
             //RegisterIndicator(symbol, historicalHigh, ResolveConsolidator(symbol, res), selectorHigh);
 
             //if (EnableAutomaticIndicatorWarmUp)
@@ -303,6 +317,16 @@ namespace QuantConnect.Algorithm.CSharp
                     selectorLowOfHigh = x => ((QuoteBar)x).Low;
                 }
             }
+
+
+
+
+            //WHAT IS ALL OF THIS SUPPOSED TO DO? IT SHOWS UP IN LIKE 6 PLACES
+            //UNCOMMENT FOR BUILD ERROR
+
+
+
+
 
             //RegisterIndicator(symbol, historicalLTH, ResolveConsolidator(symbol, res), selectorLowOfHigh);
 
@@ -374,6 +398,17 @@ namespace QuantConnect.Algorithm.CSharp
                     selectorLow = x => ((QuoteBar)x).Low;
                 }
             }
+
+
+
+
+            //WHAT IS ALL OF THIS SUPPOSED TO DO? IT SHOWS UP IN LIKE 6 PLACES
+            //UNCOMMENT FOR BUILD ERROR
+
+
+
+
+
 
             //RegisterIndicator(symbol, historicalLow, ResolveConsolidator(symbol, res), selectorLow);
 
