@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="QuantConnect.Algorithm.Framework" Version="2.4.7069" />
+    <PackageReference Include="Python.Runtime" Version="2.7.9" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Python.Runtime, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null" />
+  </ItemGroup>
+</Project>
