@@ -12,4 +12,7 @@
   <ItemGroup>
     <Reference Include="Python.Runtime, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
 </Project>

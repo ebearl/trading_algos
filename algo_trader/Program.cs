@@ -1,4 +1,5 @@
-﻿using QuantConnect.Brokerages;
+﻿using algo_trader.Models;
+using QuantConnect.Brokerages;
 using QuantConnect.Data;
 using QuantConnect.Data.Market;
 using QuantConnect.Indicators;
@@ -17,9 +18,7 @@ namespace QuantConnect.Algorithm.CSharp
 
         int candleSize = 28800;
 
-        //resolution variable - this needs to be changed to the monthly but we need to make a custom quotebar
-        Resolution res = Resolution.Daily;
-
+        
         //Program variables
         public decimal usd;
         public decimal open;
@@ -30,8 +29,7 @@ namespace QuantConnect.Algorithm.CSharp
         public decimal tp;
         public int trackPrice;
         public int barCount;        
-
-        //list of symbols
+        
         List<string> FxSymbols = new List<string>()
         {
             "AUDCAD", "AUDCHF", "AUDHKD", "AUDJPY", "AUDNZD", "AUDSGD", "AUDUSD", "CADCHF", "CADHKD", "CADJPY", "CADSGD",
@@ -43,15 +41,15 @@ namespace QuantConnect.Algorithm.CSharp
             "USDTRY", "USDZAR", "ZARJPY"
         };
 
-        List<historicalHigh> historicalHighs = new List<historicalHigh>();
-        List<historicalHighCatalogued> historicalHighsCatalogued = new List<historicalHighCatalogued>();
-        List<secondaryHigh> secondaryHighs = new List<secondaryHigh>();
-        List<longTrade> longTrades = new List<longTrade>();
+        List<HistoricalHigh> historicalHighs = new List<HistoricalHigh>();
+        List<HistoricalHighCatalogued> HistoricalHighsCatalogued = new List<HistoricalHighCatalogued>();
+        List<SecondaryHigh> secondaryHighs = new List<SecondaryHigh>();
+        List<LongTrade> longTrades = new List<LongTrade>();
 
-        List<historicalLow> historicalLows = new List<historicalLow>();
-        List<historicalLowCatalogued> historicalLowsCatalogued = new List<historicalLowCatalogued>();
-        List<secondaryLow> secondaryLows = new List<secondaryLow>();
-        List<shortTrade> shortTrades = new List<shortTrade>();
+        List<HistoricalLow> historicalLows = new List<HistoricalLow>();
+        List<HistoricalLowCatalogued> historicalLowsCatalogued = new List<HistoricalLowCatalogued>();
+        List<SecondaryLow> secondaryLows = new List<SecondaryLow>();
+        List<ShortTrade> shortTrades = new List<ShortTrade>();
 
         int numberOfSymbols => FxSymbols.Count; //this checks how many items there are and adds it to the dictionary
 
@@ -65,19 +63,21 @@ namespace QuantConnect.Algorithm.CSharp
             SetCash(startingAccountSize);             //Set Strategy Cash
             SetBrokerageModel(BrokerageName.OandaBrokerage, AccountType.Margin);
 
+                        
+            foreach (var symbol in FxSymbols) //loops through the symbols in the fxsymbols list and passing them into the add forex function and then adding them to the dictionary
+            {
+                var Forex = AddForex(symbol, Resolution.Daily);
 
 
-            //WHAT IS ALL OF THIS SUPPOSED TO DO?
+
+                //FIGURE OUT HOW TO ADD PAIRS TO THE SUBSCRIPTION MANAGER
+                //data.Add(symbol, new SymbolData(Forex.Symbol, Forex.BaseCurrencySymbol));
+
+            }
 
 
-            //loop through our list of symbols and add them to the subscription manager
-            //foreach (var symbol in FxSymbols) //loops through the symbols in the fxsymbols list and passing them into the add forex function and then adding them to the dictionary
-            //{
-            //    var Forex = AddForex(symbol, res);
-            //    //Data.Add(symbol, new SymbolData(Forex.Symbol, Forex.BaseCurrencySymbol));
-                
-            //}
 
+            //WHAT IS THIS SUPPOSED TO DO
             ////loop through the dictionary 
             //foreach (var key in Data) //adds all entries into the dictionary
             //{
@@ -91,6 +91,7 @@ namespace QuantConnect.Algorithm.CSharp
 
 
 
+            //DO WE REALLY NEED TO LOG THESE VALUES?
             // Log values from history request of second-resolution data
             /*foreach (var data in secondHistory)
             {
@@ -122,6 +123,7 @@ namespace QuantConnect.Algorithm.CSharp
                     continue;
                 }
             }
+
             foreach (var historicalLow in historicalLows.ToList()) //something on the if statements needs to be fixed so that it doesn't keep looping to 0
             {
                 if (historicalLows.Last().atl < historicalLows[historicalLows.Count - 2].atl)
@@ -143,7 +145,8 @@ namespace QuantConnect.Algorithm.CSharp
                 //return;
             }
         }
-        //check to see if we 
+
+        
         public void CheckTrend()
         {
             for (int i = 0; i < barCount; i++)
@@ -151,7 +154,7 @@ namespace QuantConnect.Algorithm.CSharp
                 if (trackPrice > historicalHighs.Last().ath)
                 {
                     Console.WriteLine("We are in an uptrend");
-                    List<historicalHighCatalogued> historicalHighsCatalogued = new List<historicalHighCatalogued>(historicalHighs.Select(x => new historicalHighCatalogued { athC = x.ath, aLthC = x.aLth }));
+                    List<HistoricalHighCatalogued> historicalHighsCatalogued = new List<HistoricalHighCatalogued>(historicalHighs.Select(x => new HistoricalHighCatalogued { athC = x.ath, aLthC = x.aLth }));
                     //historicalHighs.Clear();
                     Console.WriteLine("There are {0} in the all time low catalogue", historicalHighsCatalogued.Count());
                     historicalHighsCatalogued.ForEach(atlC => Console.WriteLine("{0}\t", atlC));
@@ -164,17 +167,17 @@ namespace QuantConnect.Algorithm.CSharp
                     if (trackPrice < historicalLows.First().aHtl) //this is where we can be discriminant where we want to place our trades
                     {
                         //enter market order
-                        List<secondaryLow> secondaryLows = new List<secondaryLow>();
-                        List<longTrade> longTrades = new List<longTrade>();
+                        List<SecondaryLow> secondaryLows = new List<SecondaryLow>();
+                        List<LongTrade> longTrades = new List<LongTrade>();
 
-                        longTrade longTrade1 = new longTrade()
+                        LongTrade longTrade1 = new LongTrade()
                         {
                             sl = trackPrice - 0.050M,
                             tp = historicalHighs.First().aLth
                             //something for market order here
                         };
 
-                        secondaryLow secondaryLow1 = new secondaryLow();
+                        SecondaryLow secondaryLow1 = new SecondaryLow();
                         secondaryLow1.secL = trackPrice;
                         secondaryLow1.secHtl = trackPrice - .050M;
 
@@ -185,7 +188,7 @@ namespace QuantConnect.Algorithm.CSharp
 
                         if (trackPrice > secondaryLows.First().secHtl)
                         {
-                            shortTrade shortTrade2 = new shortTrade()
+                            ShortTrade shortTrade2 = new ShortTrade()
                             {
                                 sl = trackPrice + 0.050M,
                                 tp = historicalLows.First().aHtl
@@ -197,7 +200,7 @@ namespace QuantConnect.Algorithm.CSharp
                     if (trackPrice < historicalLows.Last().atl)
                     {
                         Console.WriteLine("We are in a downtrend");
-                        List<historicalLowCatalogued> historicalLowsCatalogued = new List<historicalLowCatalogued>(historicalLows.Select(x => new historicalLowCatalogued { atlC = x.atl, aHtlC = x.aHtl }));
+                        List<HistoricalLowCatalogued> historicalLowsCatalogued = new List<HistoricalLowCatalogued>(historicalLows.Select(x => new HistoricalLowCatalogued { atlC = x.atl, aHtlC = x.aHtl }));
                         //historicalLows.Clear();
                         Console.WriteLine("There are {0} in the all time low catalogue", historicalLowsCatalogued.Count());
                         historicalLowsCatalogued.ForEach(athC => Console.WriteLine("{0}\t", athC.ToString()));
@@ -211,17 +214,17 @@ namespace QuantConnect.Algorithm.CSharp
                         if (trackPrice > historicalHighs.First().aLth) //this is where we can be discriminant where we want to place our trades
                         {
                             //enter market order
-                            List<secondaryHigh> secondaryHighs = new List<secondaryHigh>();
-                            List<shortTrade> shortTrades = new List<shortTrade>();
+                            List<SecondaryHigh> secondaryHighs = new List<SecondaryHigh>();
+                            List<ShortTrade> shortTrades = new List<ShortTrade>(); 
 
-                            shortTrade shortTrade1 = new shortTrade()
+                            ShortTrade shortTrade1 = new ShortTrade()
                             {
                                 sl = trackPrice + 0.050M,
                                 tp = historicalLows.First().aHtl
                                 //something for market order here
                             };
 
-                            secondaryHigh secondaryHigh1 = new secondaryHigh()
+                            SecondaryHigh secondaryHigh1 = new SecondaryHigh()
                             {
                                 secH = trackPrice,
                                 secLth = trackPrice - .050M
@@ -233,7 +236,7 @@ namespace QuantConnect.Algorithm.CSharp
 
                             if (trackPrice > secondaryHighs.First().secLth)
                             {
-                                shortTrade shortTrade2 = new shortTrade()
+                                ShortTrade shortTrade2 = new ShortTrade()
                                 {
                                     sl = trackPrice + 0.050M,
                                     tp = historicalLows.First().aHtl
@@ -249,24 +252,11 @@ namespace QuantConnect.Algorithm.CSharp
         }
 
         //this is our custom class
-        public class SymbolData
-        {
-            public Symbol Symbol;
-            public string BaseSymbol;
-            public MovingAverageConvergenceDivergence Macd;
-
-            public SymbolData(Symbol symbol, string baseSymbol)
-            {
-                Symbol = symbol;
-
-                BaseSymbol = baseSymbol;
-            }
-
-        }
+        
 
 
 
-        public Maximum setAllTimeHigh(Symbol symbol, int period, Resolution? res, Func<IBaseData, decimal> selectorHigh = null)
+        public Maximum SetAllTimeHigh(Symbol symbol, int period, Resolution? res, Func<IBaseData, decimal> selectorHigh = null)
         {
             var name = CreateIndicatorName(symbol, $"Historical High({period})", res);
             var historicalHigh = new Maximum(name, period);
@@ -302,7 +292,7 @@ namespace QuantConnect.Algorithm.CSharp
             return historicalHigh;
         }
 
-        public Maximum setAllTimeHighLow(Symbol symbol, int period, Resolution? res, Func<IBaseData, decimal> selectorLowOfHigh = null)
+        public Maximum SetAllTimeHighLow(Symbol symbol, int period, Resolution? res, Func<IBaseData, decimal> selectorLowOfHigh = null)
         {
             var name = CreateIndicatorName(symbol, $"Historical Low To High({period})", res);
             var historicalLTH = new Maximum(name, period);
@@ -338,19 +328,12 @@ namespace QuantConnect.Algorithm.CSharp
             return historicalLTH;
         }
 
-        public class historicalHigh
-        {            
-            public decimal ath { get; set; }
-            public decimal aLth { get; set; }
-            public DateTime closeDate { get; set; }
-            public int count { get; set; }            
-        }
-
+        
         public void RecordAllTimeHighEvent(Symbol symbol, int period, Resolution? res, Func<IBaseData, decimal> selectorHigh = null, Func<IBaseData, decimal> selectorLowOfHigh = null)
         {
-            Maximum allTimeHigh = setAllTimeHigh(symbol, period, res, selectorHigh);
-            Maximum allTimeHighLow = setAllTimeHighLow(symbol, period, res, selectorLowOfHigh);            
-            historicalHigh newHistoricalHigh = new historicalHigh();
+            Maximum allTimeHigh = SetAllTimeHigh(symbol, period, res, selectorHigh);
+            Maximum allTimeHighLow = SetAllTimeHighLow(symbol, period, res, selectorLowOfHigh);            
+            HistoricalHigh newHistoricalHigh = new HistoricalHigh();
 
             newHistoricalHigh.ath = allTimeHigh;
             newHistoricalHigh.aLth = allTimeHighLow;
@@ -361,29 +344,8 @@ namespace QuantConnect.Algorithm.CSharp
             historicalHighs.Add(newHistoricalHigh);
         }
 
-
-
-        public class historicalHighCatalogued : historicalHigh
-        {
-            public decimal athC { get; set; }
-            public decimal aLthC { get; set; }
-            public DateTime closeDateC { get; set; }
-        }
-
-        public class secondaryHigh
-        {
-            public decimal secH { get; set; }
-            public decimal secLth { get; set; }
-            public DateTime secCloseDate { get; set; }
-        }
-
-        public class longTrade
-        {
-            public decimal sl { get; set; }
-            public decimal tp { get; set; }
-        }
-
-        public Minimum atl(Symbol symbol, int period, Resolution? res, Func<IBaseData, decimal> selectorLow = null)
+                        
+        public Minimum SetAllTimeLow(Symbol symbol, int period, Resolution? res, Func<IBaseData, decimal> selectorLow = null)
         {
             var name = CreateIndicatorName(symbol, $"Historical Low({period})", res);
             var historicalLow = new Minimum(name, period);
@@ -420,6 +382,7 @@ namespace QuantConnect.Algorithm.CSharp
             return historicalLow;
         }
 
+
         public Minimum aHtl(Symbol symbol, int period, Resolution? res, Func<IBaseData, decimal> selectorHighOfLow = null)
         {
             var name = CreateIndicatorName(symbol, $"Historical High To Low({period})", res);
@@ -444,33 +407,6 @@ namespace QuantConnect.Algorithm.CSharp
             //}
 
             return historicalHTL;
-        }
-
-        public class historicalLow
-        {
-            public decimal atl { get; set; }
-            public decimal aHtl { get; set; }
-            public DateTime closeDate { get; set; }
-        }
-
-        public class historicalLowCatalogued : historicalLow
-        {
-            public decimal atlC { get; set; }
-            public decimal aHtlC { get; set; }
-            public DateTime closeDateC { get; set; }
-        }
-
-        public class secondaryLow
-        {
-            public decimal secL { get; set; }
-            public decimal secHtl { get; set; }
-            public DateTime secCloseDate { get; set; }
-        }
-
-        public class shortTrade
-        {
-            public decimal sl { get; set; }
-            public decimal tp { get; set; }
-        }
+        }                
     }
 }
