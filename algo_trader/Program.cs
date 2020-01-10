@@ -337,8 +337,7 @@ namespace QuantConnect.Algorithm.CSharp
 
             newHistoricalHigh.ath = allTimeHigh;
             newHistoricalHigh.aLth = allTimeHighLow;
-            var lastHigh = historicalHighs[historicalHighs.Count];
-            newHistoricalHigh.count = 0;
+            newHistoricalHigh.count = historicalHighs.Count;
 
             
             historicalHighs.Add(newHistoricalHigh);
