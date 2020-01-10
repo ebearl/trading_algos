@@ -26,7 +26,7 @@
 
 
 ## Requirement 2:
-  ##### Create a method to log the historical all time highs, all time low to highs. Will do the following:
+  #### Create a method to log the historical all time highs, all time low to highs. Will do the following:
     * creates a new historical high class.
     * sets the attributes in the new historical high class (ath, aLth, occurrence, Id).
     * sets the Id of the new historical high class to 0.
@@ -36,7 +36,7 @@
     * sorts the list historical high list from lowest value recorded ath to highest value recorded, so historicalHigh.last() is the greatest value.
     * add horizontal rays to the ath and aLth values.
 
-  ##### Create a method to log the historical all time lows, all time high to lows. Will do the following:
+  #### Create a method to log the historical all time lows, all time high to lows. Will do the following:
     * creates a new historical low class.
     * sets the attributes in the new historical low class (atl, aHtl, occurrence, Id).
     * sets the Id of the new historical low class to 0.
@@ -48,7 +48,7 @@
 
 
 ## Requirement 3:
-  ##### Create a method for the algo to recognize a trend.
+  #### Create a method for the algo to recognize a trend.
     *if trackPrice < historicalLows.last().atl && downtrend.last().occurrence > uptrend.last().occurrence.
         *creates a new downtrend class.
         *sets the attributes of the new downtrend class (dt, occurrence, Id).
@@ -65,7 +65,7 @@
         *adds a line plot from historicalLows.last().atl to historicalHighs.first().ath.
 
 
-  ##### Create a method to log the secondary highs, secondary low to highs. Will do the following:
+  #### Create a method to log the secondary highs, secondary low to highs. Will do the following:
     * triggers when trackPrice > list historicalHighs.first().aLth and price is in a downtrend.
     * creates a new secondary high class.
     * sets the attributes in the new secondary high class (secHigh, secLth, occurrence, Id).
@@ -81,7 +81,7 @@
     * add the horizontal lines for secHigh and secLth.
 
 
-  ##### Create a method to log the secondary lows, secondary high to lows. Will do the following:
+  #### Create a method to log the secondary lows, secondary high to lows. Will do the following:
     * triggers when trackPrice < list historicalLows.first().aHtl and price is in an uptrend.
     * creates a new secondary low class
     * sets the attributes in the new secondary low class (secLow, secHtl, occurrence, Id).
@@ -99,7 +99,7 @@
     * add the horizontal lines for secLow and secHth.
 
 
-  ##### Create a method to enter a short trade //this may be subject to change and may not need a method for it.
+  #### Create a method to enter a short trade //this may be subject to change and may not need a method for it.
   ###### instead of entering all of this information we may just want an alert and then trade on smaller timeframes after price is greater than historicalHighs.first().aLth.
       * triggers when trackPrice > list historicalHighs.first().aLth || list historicalHighs.last().aLth and price is in a downtrend.
   ###### side note: there will be a point when historicalHighs.first().aLth = historicalHighs.last().aLth and will be the secondary high.
@@ -114,7 +114,7 @@
       * create a log statement to log the values when trackPrice < list historicalHighs.first().aLth. //in the future this will be an alert sent to the user's email
 
 
-##### Create a method to enter a long trade //this may be subject to change and may not need a method for it.
+#### Create a method to enter a long trade //this may be subject to change and may not need a method for it.
   ###### instead of entering all of this information we may just want an alert and then trade on smaller timeframes after price is less than historicalLows.first().aHth.
       * triggers when trackPrice < list historicalLows.first().aHth || list historicalLows.last().aHth and price is in an uptrend.
   ###### side note: there will be a point when historicalHighs.first().aLth = historicalHighs.last().aLth and will be the secondary high.
