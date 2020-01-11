@@ -6,9 +6,9 @@ namespace algo_trader.Models
 {
     public class SymbolData
     {
-        public Symbol Symbol;
-        public string BaseSymbol;
-        public MovingAverageConvergenceDivergence Macd;
+        Symbol Symbol;
+        string BaseSymbol;
+        MovingAverageConvergenceDivergence Macd;
 
         public SymbolData(Symbol symbol, string baseSymbol)
         {
