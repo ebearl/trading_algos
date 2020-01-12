@@ -18,7 +18,7 @@ namespace QuantConnect.Algorithm.CSharp
 
         int candleSize = 28800;
 
-        
+
         //Program variables
         public decimal usd;
         public decimal open;
@@ -28,8 +28,8 @@ namespace QuantConnect.Algorithm.CSharp
         public decimal sl;
         public decimal tp;
         public int trackPrice;
-        public int barCount;        
-        
+        public int barCount;
+
         List<string> FxSymbols = new List<string>()
         {
             "AUDCAD", "AUDCHF", "AUDHKD", "AUDJPY", "AUDNZD", "AUDSGD", "AUDUSD", "CADCHF", "CADHKD", "CADJPY", "CADSGD",
@@ -55,7 +55,7 @@ namespace QuantConnect.Algorithm.CSharp
 
         int momentCounter = 1;
 
-        
+
         public override void Initialize()
         {
             SetStartDate(1970, 1, 1);  //Set Start Date
@@ -63,47 +63,25 @@ namespace QuantConnect.Algorithm.CSharp
             SetCash(startingAccountSize);             //Set Strategy Cash
             SetBrokerageModel(BrokerageName.OandaBrokerage, AccountType.Margin);
 
-                        
+
+            var stockPlot = new Chart("Trade Plot");
+            var priceHigh = new Series("Historical Highs", SeriesType.Flag, "$", Color.Green);
+            var priceLow = new Series("Historical Low", SeriesType.Flag, "$", Color.Red);
+
+            stockPlot.AddSeries(priceHigh);
+            stockPlot.AddSeries(priceLow);
+
+
             foreach (var symbol in FxSymbols) //loops through the symbols in the fxsymbols list and passing them into the add forex function and then adding them to the dictionary
             {
                 var Forex = AddForex(symbol, Resolution.Daily);
-
-
-
-                //FIGURE OUT HOW TO ADD PAIRS TO THE SUBSCRIPTION MANAGER
-                //data.Add(symbol, new SymbolData(Forex.Symbol, Forex.BaseCurrencySymbol));
-
             }
-
-
-
-            //WHAT IS THIS SUPPOSED TO DO
-            ////loop through the dictionary 
-            //foreach (var key in Data) //adds all entries into the dictionary
-            //{
-            //    //assigning each value associated with the keywords to a new variable name 'symbolData'
-            //    var symbolData = key.Value;
-
-            //    //using the helper method to assign a macd indicator to the macd attribute of our instance of SymbolData
-            //    //symbolData.Macd = MACD(symbolData.Symbol, fastPeriod, slowPeriod, signalPeriod, MovingAverageType.Exponential, res);
-            //}
-
-
-
-
-            //DO WE REALLY NEED TO LOG THESE VALUES?
-            // Log values from history request of second-resolution data
-            /*foreach (var data in secondHistory)
-            {
-                foreach (var key in data.Keys)
-                {
-                    Log(key.Value + ": " + data.Time + " > " + data[key].Value);
-                }
-            }*/
         }
 
         public override void OnData(Slice data)
         {
+            Plot("Trade Plot", "Price Low", data);
+            Plot("Trade Plot", "Price High", historicalHighs);
 
             foreach (var historicalHigh in historicalHighs.ToList())
             {
@@ -146,7 +124,7 @@ namespace QuantConnect.Algorithm.CSharp
             }
         }
 
-        
+
         public void CheckTrend()
         {
             for (int i = 0; i < barCount; i++)
@@ -252,7 +230,7 @@ namespace QuantConnect.Algorithm.CSharp
         }
 
         //this is our custom class
-        
+
 
 
 
@@ -328,22 +306,22 @@ namespace QuantConnect.Algorithm.CSharp
             return historicalLTH;
         }
 
-        
+
         public void RecordAllTimeHighEvent(Symbol symbol, int period, Resolution? res, Func<IBaseData, decimal> selectorHigh = null, Func<IBaseData, decimal> selectorLowOfHigh = null)
         {
             Maximum allTimeHigh = SetAllTimeHigh(symbol, period, res, selectorHigh);
-            Maximum allTimeHighLow = SetAllTimeHighLow(symbol, period, res, selectorLowOfHigh);            
+            Maximum allTimeHighLow = SetAllTimeHighLow(symbol, period, res, selectorLowOfHigh);
             HistoricalHigh newHistoricalHigh = new HistoricalHigh();
 
             newHistoricalHigh.ath = allTimeHigh;
             newHistoricalHigh.aLth = allTimeHighLow;
             newHistoricalHigh.count = historicalHighs.Count;
 
-            
+
             historicalHighs.Add(newHistoricalHigh);
         }
 
-                        
+
         public Minimum SetAllTimeLow(Symbol symbol, int period, Resolution? res, Func<IBaseData, decimal> selectorLow = null)
         {
             var name = CreateIndicatorName(symbol, $"Historical Low({period})", res);
@@ -406,6 +384,6 @@ namespace QuantConnect.Algorithm.CSharp
             //}
 
             return historicalHTL;
-        }                
+        }
     }
 }
