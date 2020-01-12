@@ -15,6 +15,7 @@ namespace QuantConnect.Algorithm.CSharp
     {
 
     	private List<TradeBar> _spyBarHistory = new List<TradeBar>();
+    	private List<TradeBar> _spyBarHistoryHighs = new List<TradeBar>();
 
         public override void Initialize()
         {
@@ -24,28 +25,51 @@ namespace QuantConnect.Algorithm.CSharp
 
             var spy = AddEquity("SPY", Resolution.Daily);
 
-            _spyBarHistory = History<TradeBar>("SPY", TimeSpan.FromDays(365)).ToList();
-
 
             var stockPlot = new Chart("Trade Plot");
-            var assetPriceClose = new Series("ClosePrice", SeriesType.Candle);
-            var dayHigh = new Series("Day High", SeriesType.Scatter, "$", Color.Green, ScatterMarkerSymbol.Triangle);
-            var dayLow = new Series("Day Low", SeriesType.Scatter, "$", Color.Red, ScatterMarkerSymbol.TriangleDown);
+            var assetPriceClose = new Series("ClosePrice", SeriesType.Line);
+            var allTimeHighs = new Series("ATH", SeriesType.Scatter, "$", Color.Green, ScatterMarkerSymbol.Triangle);
 
 
-            stockPlot.AddSeries(dayHigh);
-            stockPlot.AddSeries(dayLow);
+            // stockPlot.AddSeries(dayHigh);
+            stockPlot.AddSeries(assetPriceClose);
+            stockPlot.AddSeries(allTimeHighs);
             AddChart(stockPlot);
         }
 
         /// OnData event is the primary entry point for your algorithm. Each new data point will be pumped in here.
         /// Slice object keyed by symbol containing the stock data
+        List<TradeBar> tempAth = new List<TradeBar>();
         public override void OnData(Slice data)
         {
-            Plot("Trade Plot", "ClosePrice", data["SPY"].Close);
-            Plot("Trade Plot", "Day High", data["SPY"].High);
-            Plot("Trade Plot", "Day Low", data["SPY"].Low);
-        }
+        	TradeBar currentBar = data["SPY"];
+        	TradeBar previousBar = null;
+        	_spyBarHistory.Add(currentBar);
 
+        	Plot("Trade Plot", "ClosePrice", currentBar.Close);
+
+        	if(_spyBarHistory.IndexOf(currentBar) == 0) {
+        		tempAth.Add(currentBar);
+        	}
+
+        	if(_spyBarHistory.Count > 1) {
+        		previousBar = _spyBarHistory[_spyBarHistory.IndexOf(currentBar) - 1];
+        	}
+
+        	if(previousBar != null) {
+	        	if(currentBar.High > previousBar.High) {
+	        		tempAth.Add(currentBar);
+
+	        		if(tempAth[tempAth.Count - 2].High > currentBar.High) {
+	        			tempAth.RemoveAt(tempAth.Count - 1);
+	        			Debug($"remove previous bar");
+	        		} else {
+	        			Plot("Trade Plot", "ATH", currentBar.High);
+	        		}
+	        	}
+        	}
+
+        	Debug($"Temp Ath: {tempAth.Count}");
+        }
     }
 }
