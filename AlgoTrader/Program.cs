@@ -75,44 +75,12 @@ namespace QuantConnect.Algorithm.CSharp
             foreach (var symbol in FxSymbols) //loops through the symbols in the fxsymbols list and passing them into the add forex function and then adding them to the dictionary
             {
                 var Forex = AddForex(symbol, Resolution.Daily);
-
-
-
-                //FIGURE OUT HOW TO ADD PAIRS TO THE SUBSCRIPTION MANAGER
-                //data.Add(symbol, new SymbolData(Forex.Symbol, Forex.BaseCurrencySymbol));
-
             }
-
-
-
-            //WHAT IS THIS SUPPOSED TO DO
-            ////loop through the dictionary
-            //foreach (var key in Data) //adds all entries into the dictionary
-            //{
-            //    //assigning each value associated with the keywords to a new variable name 'symbolData'
-            //    var symbolData = key.Value;
-
-            //    //using the helper method to assign a macd indicator to the macd attribute of our instance of SymbolData
-            //    //symbolData.Macd = MACD(symbolData.Symbol, fastPeriod, slowPeriod, signalPeriod, MovingAverageType.Exponential, res);
-            //}
-
-
-
-
-            //DO WE REALLY NEED TO LOG THESE VALUES?
-            // Log values from history request of second-resolution data
-            /*foreach (var data in secondHistory)
-            {
-                foreach (var key in data.Keys)
-                {
-                    Log(key.Value + ": " + data.Time + " > " + data[key].Value);
-                }
-            }*/
         }
 
         public override void OnData(Slice data)
         {
-            Plot("Trade Plot", "Price Low", historicalLows);
+            Plot("Trade Plot", "Price Low", data);
             Plot("Trade Plot", "Price High", historicalHighs);
 
             foreach (var historicalHigh in historicalHighs.ToList())
