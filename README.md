@@ -2,21 +2,22 @@
 
 ## Requirements 0:
   * Create a custom bar that will display the monthly data.
-  * Create a method that will iterate through every quote bar that is possible through a fx broker. (this will be subject to change based on the user).
-  * Create high, low, close, open.
-  * Create a variable for trackPrice so that the chart understands the current price for quotebar.
+  //* Create a method that will iterate through every quote bar that is possible through a fx broker. (this will be subject to change based on the user).
+  //* Create high, low, close, open.
+  //* Create a variable for trackPrice so that the chart understands the current price for quotebar.
   * Create a list of symbols for the fx broker. (this will be subject to change based on the user and broker).
+    *During our tests we will just choose 1 asset with as much trend data as posisble so this is an optional requirement on 1st rollout.
   * Add a way to get multiple timeframes other than the monthly custom bar data that we want.
     *We will use similar logic for the historical values to trade on smaller time frames.
   * Create a chart method to plot the indicator on the chart by using the built in add chart and add indicator method.
 
 
 ## Requirement 1:
-  * Create class for symbol data - holds symbol, baseSymbol, MacD, symbol data object //I'm not sure this is needed
-  * Create class for historical highs - holds ath (decimal), aLTH (decimal), occurrence(datetime), Id(int)
-  * Create class for historical lows - holds atl (decimal), aHTL (decimal), occurrence (datetime), Id(int)
-  * Create class for historical highs catalogued - holds ath (decimal), aLTH (decimal), occurrence(datetime), Id(int)
-  * Create class for historical lows catalogued - holds atl (decimal), aHTL (decimal), occurrence (datetime), Id(int)
+  //* Create class for symbol data - holds symbol, baseSymbol, MacD, symbol data object //I'm not sure this is needed
+  //* Create class for historical highs - holds ath (decimal), aLTH (decimal), occurrence(datetime), Id(int)
+  //* Create class for historical lows - holds atl (decimal), aHTL (decimal), occurrence (datetime), Id(int)
+  //* Create class for historical highs catalogued - holds ath (decimal), aLTH (decimal), occurrence(datetime), Id(int)
+  //* Create class for historical lows catalogued - holds atl (decimal), aHTL (decimal), occurrence (datetime), Id(int)
   * Create class for secondary highs - holds ath (decimal), aLTH (decimal), occurrence(datetime), Id(int)
   * Create class for secondary lows - holds atl (decimal), aHTL (decimal), occurrence (datetime), Id(int)
   * Create class for short trades - holds sl (decimal), tp (decimal), occurrence (datetime), market order (built in action) //we may not need this class.
@@ -27,23 +28,23 @@
 
 ## Requirement 2:
  #### Create a method to log the historical all time highs, all time low to highs. Will do the following:
-   * creates a new historical high class.
-   * sets the attributes in the new historical high class (ath, aLth, occurrence, Id).
-   * sets the Id of the new historical high class to 0.
-   * retrieves the previous all time high.
-   * adds the new historical high class to the historical highs list.
-   * increments the historical high list by 1.
-   * sorts the list historical high list from lowest value recorded ath to highest value recorded, so historicalHigh.last() is the greatest value.
+   //* creates a new historical high class.
+   //* sets the attributes in the new historical high class (ath, aLth, occurrence, Id).
+   //* sets the Id of the new historical high class to 0.
+   //* retrieves the previous all time high.
+   //* adds the new historical high class to the historical highs list.
+   //* increments the historical high list by 1.
+   //* sorts the list historical high list from lowest value recorded ath to highest value recorded, so historicalHigh.last() is the greatest value.
    * add horizontal rays to the ath and aLth values.
 
   #### Create a method to log the historical all time lows, all time high to lows. Will do the following:
-   * creates a new historical low class.
-   * sets the attributes in the new historical low class (atl, aHtl, occurrence, Id).
-   * sets the Id of the new historical low class to 0.
-   * retrieves the previous all time low.
-   * adds the new historical high class to the historical lows list.
-   * increments the historical low list by 1.
-   * sorts the list historical low list from highest value recorded atl to lowest value recorded, so historicallow.last() is the least value.
+   //* creates a new historical low class.
+   //* sets the attributes in the new historical low class (atl, aHtl, occurrence, Id).
+   //* sets the Id of the new historical low class to 0.
+   //* retrieves the previous all time low.
+   //* adds the new historical high class to the historical lows list.
+   //* increments the historical low list by 1.
+   //* sorts the list historical low list from highest value recorded atl to lowest value recorded, so historicallow.last() is the least value.
    * add horizontal rays to the atl and aHtl values.
 
 
